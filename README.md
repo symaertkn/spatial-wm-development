@@ -10,16 +10,10 @@ the data can be obtained, matching your manuscript's data statement.]
 
 ```
 spatial-wm-development/
-├── README.md              # this file
 ├── LICENSE
-├── spatial-wm-development.Rproj
-├── scripts/               # analysis code, run in numbered order
-│   ├── 01_preprocess.R
-│   ├── 02_fit_models.R
-│   └── 03_figures.R
-└── output/
-    ├── figures/           # figures in the paper
-    └── models/            # saved model fits
+├── README.md
+├── scripts
+└── spatial-wm-development.Rproj
 ```
 
 ## How to run
