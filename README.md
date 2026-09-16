@@ -70,11 +70,5 @@ Run `data_and_plots/` first, then `analyses/`.
 | `05-longt_meanfield_full_model_plot.R` | Model prediction  | [Figure 8] |
 
 
-## File paths
-
-All paths in the scripts are relative to the project folder, built with the [`here`](https://here.r-lib.org/) package, so no paths need to be
-changed. The data are not included in this repository; to rerun the
-analyses, place the data in a `data/` folder in the project root.
-
 ## License
 Code is released under the MIT License.
