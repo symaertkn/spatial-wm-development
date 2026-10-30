@@ -56,24 +56,48 @@ f_all <- f_all %>%
   left_join(scale_pars, by = "predictor") %>%
   mutate(x_raw = x * s + mu)
 
-labs_pred <- c(
-  days_since_first_day_scaled           = "days since start (days)",
-  starting_age_scaled                   = "starting age (years)",
-  item_index_in_session_daily_scaled    = "within-day trial index ",
-  day_gap_between_sessions_daily_scaled = "between-day gap (days)"
+library(patchwork)
+
+grp_map <- c(
+  starting_age_scaled                   = "Maturation",
+  days_since_first_day_scaled           = "Maturation",
+  item_index_in_session_daily_scaled    = "Practice",
+  day_gap_between_sessions_daily_scaled = "Practice"
 )
 
-p_long_pred <- f_all %>%
-  mutate(predictor = factor(predictor, levels = preds)) %>%
-  ggplot(aes(x = x_raw, y = Estimate, ymin = Q2.5, ymax = Q97.5,
-             fill = difficulty_f, color = difficulty_f)) +
-  geom_smooth(stat = "identity", alpha = 1/4, linewidth = 1/2) +
-  facet_wrap(~ predictor, scales = "free_x",
-             labeller = labeller(predictor = labs_pred)) +
-  scale_x_continuous(breaks = scales::breaks_pretty(4)) +
-  labs(x = NULL, y = "P(correct)",
-       color = "Difficulty", fill = "Difficulty") +
-  theme_light(base_size = 14)
+plot_df <- f_all %>%
+  mutate(predictor = factor(predictor, levels = preds),
+         predictor = forcats::fct_relevel(predictor, "starting_age_scaled"),
+         difficulty_f = factor(difficulty_f,
+                               levels = c("0", "1", "2"),
+                               labels = c("Easy", "Medium", "Hard")),
+         group = factor(grp_map[as.character(predictor)],
+                        levels = c("Maturation", "Practice")))
+
+# same y range in both rows so they stay comparable
+y_lims <- range(c(plot_df$Q2.5, plot_df$Q97.5))
+
+make_row <- function(g) {
+  plot_df %>%
+    filter(group == g) %>%
+    mutate(predictor = droplevels(predictor)) %>%
+    ggplot(aes(x = x_raw, y = Estimate, ymin = Q2.5, ymax = Q97.5,
+               fill = difficulty_f, color = difficulty_f)) +
+    geom_smooth(stat = "identity", alpha = 1/4, linewidth = 1/2) +
+    facet_grid(group ~ predictor, scales = "free_x",
+               labeller = labeller(predictor = labs_pred),
+               axes = "all_y", axis.labels = "margins") +
+    scale_x_continuous(breaks = scales::breaks_pretty(4)) +
+    coord_cartesian(ylim = y_lims) +
+    labs(x = NULL, y = "P(correct)",
+         color = "Difficulty", fill = "Difficulty") +
+    theme_minimal() +
+    theme(axis.line = element_line(colour = "black", linewidth = 0.5),
+          strip.text.y = element_text(face = "bold"))
+}
+
+p_long_pred <- (make_row("Maturation") / make_row("Practice")) +
+  plot_layout(guides = "collect", axis_titles = "collect")
 
 p_long_pred
 
