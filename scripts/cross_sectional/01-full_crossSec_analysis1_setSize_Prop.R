@@ -74,7 +74,7 @@ p2 <- ggplot(data_with_proportions_latest, aes(x = factor(as.integer(set_size)),
     size = 2
   ) +
   scale_fill_brewer(palette = "Set2") +
-  xlab("Set Size") +
+  xlab("The Last Set Size") +
   ylab("Proportion") +
   theme_minimal() +
   theme(
