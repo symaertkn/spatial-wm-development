@@ -157,7 +157,7 @@ variable_plot <- ggplot(user_plot, aes(x = created_day, y = item_index_in_sessio
   
   labs(
     x = "date",
-    y = "within-trial index",
+    y = "within-day trial index",
     subtitle = paste0("starting age = ", round(unique(user_plot$starting_age), 2))
   ) +
   theme_minimal() +
